@@ -35,6 +35,13 @@ export function extractBidDetails(
 
 function extractPrice(text: string): number | null {
   const pricePatterns = [
+    // Counter-offer specific patterns
+    /(?:my\s+new\s+bid|new\s+bid|revised\s+bid|updated\s+bid)[:\s]*\$?\s*(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)/i, // My new bid: $675.00
+    /(?:can\s+beat|beat|beat\s+that)\s+(?:the\s+)?price\s+(?:of)?\s*\$?\s*(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)/i, // I can beat that price of $699.00
+    /(?:best\s+and\s+final|final\s+offer|final\s+bid)[:\s]*\$?\s*(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)/i, // Best and final: $650.00
+    /(?:counter\s+offer|counter\s+bid)[:\s]*\$?\s*(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)/i, // Counter offer: $650.00
+    
+    // Standard patterns
     /\$\s*(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)/, // $850.00, $1,250.50
     /(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)\s*(?:dollars?|usd|bucks)/i, // 850 dollars
     /(?:price|rate|quote|cost|bid|charge|fee)[:\s]*\$?\s*(\d{1,5}(?:,\d{3})*(?:\.\d{2})?)/i, // price: $850

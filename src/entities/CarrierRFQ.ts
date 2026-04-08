@@ -9,7 +9,7 @@ import {
 import { FreightRequest } from "./FreightRequest";
 import { Carrier } from "./Carrier";
 
-export type CarrierRFQStatus = "sent" | "replied" | "no_response";
+export type CarrierRFQStatus = "sent" | "replied" | "no_response" | "processed";
 
 @Entity()
 export class CarrierRFQ {

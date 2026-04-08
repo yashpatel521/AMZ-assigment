@@ -27,6 +27,7 @@ import gmailRoutes from "./routes/gmail.route";
 import { AppDataSource } from "./config/data-source";
 import { watchGmail } from "./services/gmail";
 import { carrierRFQService } from "./services/carrier/carrier-rfq.service";
+import { autoTriggerService } from "./services/freight/auto-trigger.service";
 
 app.use("/", gmailRoutes); // This will map /webhook to our new handler
 
@@ -60,6 +61,14 @@ function scheduleWatchRenewal() {
   }, SIX_DAYS_MS);
 }
 
+// Run auto-triggers every 60 seconds
+function scheduleAutoTriggers() {
+  const CHECK_INTERVAL_MS = 60 * 1000; // 60 seconds
+  setInterval(async () => {
+    await autoTriggerService.runAutoTriggers();
+  }, CHECK_INTERVAL_MS);
+}
+
 AppDataSource.initialize()
   .then(() => {
     console.log("💿 Connected to SQLite Database");
@@ -70,9 +79,13 @@ AppDataSource.initialize()
       try {
         await watchGmail();
         scheduleWatchRenewal();
+        scheduleAutoTriggers();
         
         // Initialize carrier RFQ service and process any pending requests
         await carrierRFQService.processPendingDetailsComplete();
+        
+        // Run auto-triggers on startup to recover any stuck processes
+        await autoTriggerService.runAutoTriggers();
       } catch (err: any) {
         console.error("❌ Failed to start Gmail watch:", err.message);
         console.error(

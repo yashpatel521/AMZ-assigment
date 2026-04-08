@@ -1,7 +1,11 @@
 import { AppDataSource } from "../../config/data-source";
 import { CarrierRFQ, CarrierRFQStatus } from "../../entities/CarrierRFQ";
+import { gmail_v1 } from "googleapis";
 import { FreightRequest } from "../../entities/FreightRequest";
 import { Carrier } from "../../entities/Carrier";
+import { getGmailClient } from "../gmail";
+import { BID_DEADLINE_MINUTES } from "../../constants/bid.constants";
+import { timerManagerService } from "./timer-manager.service";
 import { carrierSelectionService } from "./carrier-selection.service";
 import { rfqEmailService } from "./rfq-email.service";
 
@@ -40,7 +44,20 @@ export class RFQManagerService {
       rfqRecords.push(savedRFQ);
     }
 
+    // Update freight request status to bid_sent
+    const freightRequestRepository = AppDataSource.getRepository(FreightRequest);
+    await freightRequestRepository.update(
+      freightRequest.id,
+      { status: "bid_sent" }
+    );
+
+    // Set timer for deadline (convert minutes to milliseconds)
+    const deadlineMs = BID_DEADLINE_MINUTES * 60 * 1000;
+    timerManagerService.setTimer(freightRequest.quoteId, deadlineMs);
+
     console.log(`✅ Created ${rfqRecords.length} RFQ records for ${freightRequest.quoteId}`);
+    console.log(`✅ Updated freight request status to bid_sent`);
+    console.log(`✅ Set deadline timer for ${BID_DEADLINE_MINUTES} minutes`);
     return rfqRecords;
   }
 

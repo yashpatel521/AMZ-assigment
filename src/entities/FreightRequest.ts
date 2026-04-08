@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-export type FreightRequestStatus = "pending_details" | "details_complete" | "quoted";
+export type FreightRequestStatus = "pending_details" | "details_complete" | "bid_sent" | "bid_received" | "rebid" | "rebid_received" | "quoted";
 
 @Entity()
 export class FreightRequest {
@@ -35,6 +35,12 @@ export class FreightRequest {
   @Column({ type: "text", nullable: true })
   rawBody: string;
 
+  @Column({ type: "text", nullable: true })
+  customerNotes: string;
+
+  @Column({ type: "text", nullable: true })
+  extractedDetails: string;
+
   // ─── Freight Fields ──────────────────────────────────────────────────────
 
   @Column({ nullable: true })
@@ -62,6 +68,10 @@ export class FreightRequest {
 
   @Column({ default: "pending_details" })
   status: FreightRequestStatus;
+
+  /** Number of times deadline has been extended */
+  @Column({ default: 0 })
+  extensionCount: number;
 
   /** Comma-separated list of fields still missing */
   @Column({ nullable: true })

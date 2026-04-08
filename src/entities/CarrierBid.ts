@@ -8,6 +8,9 @@ export class CarrierBid {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  quoteId: string;
+
   @ManyToOne(() => FreightRequest, { onDelete: "CASCADE" })
   freightRequest: FreightRequest;
 

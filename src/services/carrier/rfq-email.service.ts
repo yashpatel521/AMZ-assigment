@@ -2,6 +2,7 @@ import { gmail_v1 } from "googleapis";
 import { FreightRequest } from "../../entities/FreightRequest";
 import { Carrier } from "../../entities/Carrier";
 import { getGmailClient } from "../gmail";
+import { BID_DEADLINE_MINUTES } from "../../constants/bid.constants";
 
 export class RFQEmailService {
   private gmail: gmail_v1.Gmail;
@@ -38,7 +39,7 @@ Please reply with your best rate including:
 - Equipment type available
 
 📅 RESPONSE DEADLINE:
-Please respond within 24 hours to be considered for this shipment.
+Please respond within ${BID_DEADLINE_MINUTES} minutes to be considered for this shipment.
 
 📧 HOW TO RESPOND:
 Simply reply to this email with your quote details. Make sure to include your company name and contact information.

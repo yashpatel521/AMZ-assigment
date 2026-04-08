@@ -4,3 +4,7 @@ export { carrierSelectionService } from "./carrier-selection.service";
 export { rfqEmailService } from "./rfq-email.service";
 export { rfqManagerService } from "./rfq-manager.service";
 export { carrierRFQService } from "./carrier-rfq.service";
+export { bidDeadlineService } from "./bid-deadline.service";
+export { followupEmailService } from "./followup-email.service";
+export { bidFollowupOrchestrator } from "./bid-followup-orchestrator.service";
+export { timerManagerService } from "./timer-manager.service";
