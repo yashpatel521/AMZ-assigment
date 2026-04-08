@@ -2,6 +2,7 @@ import { gmail_v1 } from "googleapis";
 import { extractEmail, findCustomerByEmail } from "../customer-reply.service";
 import { getEmailBody } from "./parser.service";
 import { processFreightRequest } from "../freight/freight.service";
+import { processCarrierReply } from "../carrier";
 
 /**
  * Fetches a single email, identifies whether the sender is a known customer,
@@ -41,7 +42,14 @@ export async function handleEmail(messageId: string, gmail: gmail_v1.Gmail) {
   const customer = await findCustomerByEmail(senderEmail);
 
   if (!customer) {
-    console.log(`ℹ️  Sender (${senderEmail}) is not a registered customer. Ignoring.`);
+    console.log(`ℹ️  Sender (${senderEmail}) is not a registered customer. Checking if it's a carrier reply...`);
+    
+    // Try to process as carrier reply
+    const isCarrierReply = await processCarrierReply(msgId, threadId, senderEmail, subject, body || "", gmail);
+    
+    if (!isCarrierReply) {
+      console.log(`ℹ️  Sender is not a known customer or carrier. Ignoring.`);
+    }
     return;
   }
 
